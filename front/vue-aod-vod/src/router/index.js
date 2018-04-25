@@ -1,11 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+Vue.use(Router);
+
 const HelloWorld = () => import('@/components/HelloWorld');
 const Index2 = () => import('@/components/Index2');
-
-
-Vue.use(Router);
 
 export default new Router({
   routes: [
