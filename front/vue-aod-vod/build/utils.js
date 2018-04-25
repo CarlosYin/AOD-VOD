@@ -3,6 +3,7 @@ const path = require('path')
 const config = require('../config')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('../package.json')
+const args = require('optimist').argv;
 
 exports.assetsPath = function (_path) {
   const assetsSubDirectory = process.env.NODE_ENV === 'production'
@@ -98,4 +99,41 @@ exports.createNotifierCallback = () => {
       icon: path.join(__dirname, 'logo.png')
     })
   }
+}
+
+//生成版本号
+exports.generateVersion = function () {
+	//指定版本号  node build/build.js -v 1.2.0
+	if (args.v) return args.v;
+
+	//原版本号
+	var version = packageConfig.version,
+		versions = packageConfig.version.split('.');
+
+	//自增版本号  node build/build.js --auto 1
+	if (args.auto) {
+		//默认自增次版本号  1：主版本号  2：次版本号  3：修订版本号
+		var autoIndex = (args.auto || 2) - 1;
+
+		//生成新版本号
+		if (autoIndex === 2) {
+			versions.splice(autoIndex, 1, ++versions[autoIndex]);
+			version = versions.join('.');
+		} else if (autoIndex === 1) {
+			version = `${versions[0]}.${+versions[1] + 1}.0`;
+		} else {
+			version = `${+versions[0] + 1}.0.0`;
+		}
+
+		//当前版本号
+		console.log('current version: ', version);
+
+		//更新package版本信息
+		packageConfig.version = version;
+		fs.writeFile(path.resolve(__dirname, '../package.json'), JSON.stringify(packageConfig, null, 4), function (err) {
+			console.error(err);
+		})
+	}
+
+	return version;
 }
