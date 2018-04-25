@@ -1,5 +1,9 @@
 # vue-aod-vod
 
+##引用组件
+
+NProgress 2018年04月25日18:18:10 用于顶部的进度条
+
 > aod-vod
 
 ## Build Setup
